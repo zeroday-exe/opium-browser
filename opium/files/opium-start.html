@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Opium</title>
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; font-src file:; script-src 'unsafe-inline'; form-action https://duckduckgo.com">
+<style>
+  @font-face { font-family:"JetBrainsMono Nerd Font"; src:url("fonts/JetBrainsMonoNerdFont-Regular.ttf"); font-weight:400; }
+  @font-face { font-family:"JetBrainsMono Nerd Font"; src:url("fonts/JetBrainsMonoNerdFont-Bold.ttf"); font-weight:700; }
+  :root { --bg0:#07030f; --bg1:#1a0b33; --acc:#b06cff; --acc2:#e0a8ff; }
+  * { box-sizing:border-box; margin:0; }
+  html,body { height:100%; background:var(--bg0); color:#efe4ff;
+    font-family: "JetBrainsMono Nerd Font", monospace; overflow:hidden; }
+  body { background:
+      radial-gradient(60% 50% at 50% 0%, #2c1158 0%, transparent 70%),
+      radial-gradient(50% 40% at 85% 100%, #3a1270 0%, transparent 70%),
+      radial-gradient(40% 40% at 10% 90%, #200a45 0%, transparent 70%),
+      var(--bg0); }
+  canvas { position:fixed; inset:0; pointer-events:none; }
+  main { position:relative; z-index:1; height:100%; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:28px; padding:16px; }
+  h1 { font-size:clamp(48px,9vw,96px); font-weight:200; letter-spacing:.35em; margin-right:-.35em;
+    background:linear-gradient(180deg,#fff,var(--acc2) 55%,var(--acc));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    filter:drop-shadow(0 0 22px rgba(176,108,255,.55)); }
+  #clock { font-size:15px; letter-spacing:.3em; opacity:.6; text-transform:uppercase; }
+  form { width:min(620px,100%); }
+  input { width:100%; padding:16px 22px; border-radius:16px; font:inherit; font-size:17px;
+    color:#fff; background:rgba(255,255,255,.05); border:1px solid rgba(176,108,255,.25);
+    outline:none; backdrop-filter:blur(14px); transition:.25s; }
+  input::placeholder { color:rgba(234,220,255,.45); }
+  input:focus { border-color:var(--acc); box-shadow:0 0 0 4px rgba(176,108,255,.15),0 0 30px rgba(176,108,255,.35); }
+  .badges { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; font-size:12px; opacity:.7; }
+  .badges span { padding:6px 12px; border-radius:99px; border:1px solid rgba(176,108,255,.25); background:rgba(176,108,255,.07); }
+</style>
+</head>
+<body>
+<canvas id="snow"></canvas>
+<main>
+  <h1>OPIUM</h1>
+  <div id="clock"></div>
+  <form action="https://duckduckgo.com/" method="get" autocomplete="off">
+    <input name="q" placeholder="Privat suchen …" autofocus>
+  </form>
+  <div class="badges"><span>uBlock aktiv</span><span>Total Cookie Protection</span><span>DNS over HTTPS</span><span>Null Telemetrie</span></div>
+</main>
+<script>
+(() => {
+  const clock = document.getElementById('clock');
+  const tick = () => clock.textContent = new Date().toLocaleString('de-DE',
+    { weekday:'long', hour:'2-digit', minute:'2-digit' });
+  tick(); setInterval(tick, 10000);
+
+  const c = document.getElementById('snow'), ctx = c.getContext('2d');
+  let W, H, flakes = [];
+  const dpr = Math.min(devicePixelRatio || 1, 2);
+  function resize() {
+    W = innerWidth; H = innerHeight;
+    c.width = W * dpr; c.height = H * dpr; c.style.width = W + 'px'; c.style.height = H + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const n = Math.round(W * H / 9000);
+    while (flakes.length < n) flakes.push(make(true));
+    flakes.length = n;
+  }
+  function make(anyY) {
+    const z = Math.random();
+    return { x: Math.random() * W, y: anyY ? Math.random() * H : -10,
+      r: .6 + z * 2.6, vy: .25 + z * 1.1, sway: Math.random() * 6.28,
+      sw: .3 + Math.random() * .8, a: .35 + z * .65, crystal: z > .82,
+      rot: Math.random() * 6.28, vr: (Math.random() - .5) * .01 };
+  }
+  function crystal(f) {
+    ctx.save(); ctx.translate(f.x, f.y); ctx.rotate(f.rot);
+    ctx.strokeStyle = `rgba(245,230,255,${f.a})`; ctx.lineWidth = .9;
+    const L = f.r * 3;
+    for (let i = 0; i < 6; i++) {
+      ctx.rotate(Math.PI / 3);
+      ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, L);
+      ctx.moveTo(0, L * .55); ctx.lineTo(L * .25, L * .75);
+      ctx.moveTo(0, L * .55); ctx.lineTo(-L * .25, L * .75);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+  let mx = 0;
+  addEventListener('mousemove', e => mx = (e.clientX / W - .5) * .6);
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function frame(t) {
+    ctx.clearRect(0, 0, W, H);
+    ctx.shadowColor = '#c27dff';
+    for (const f of flakes) {
+      if (!reduce) {
+        f.y += f.vy; f.sway += .01; f.x += Math.sin(f.sway) * f.sw * .5 + mx * f.vy; f.rot += f.vr;
+        if (f.y > H + 10) Object.assign(f, make(false));
+        if (f.x > W + 10) f.x = -10; else if (f.x < -10) f.x = W + 10;
+      }
+      const pulse = .75 + .25 * Math.sin(t / 900 + f.sway * 3);
+      ctx.shadowBlur = 6 + f.r * 4 * pulse;
+      if (f.crystal) crystal(f);
+      else {
+        ctx.fillStyle = `rgba(243,226,255,${f.a * pulse})`;
+        ctx.beginPath(); ctx.arc(f.x, f.y, f.r, 0, 6.283); ctx.fill();
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+  addEventListener('resize', resize); resize(); requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

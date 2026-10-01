@@ -1,0 +1,42 @@
+{
+  "name": "opium",
+  "productName": "Opium",
+  "version": "1.0.0",
+  "description": "Opium – privacy browser",
+  "main": "src/main.js",
+  "author": "Opium",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win nsis portable"
+  },
+  "dependencies": {
+    "@ghostery/adblocker-electron": "^2.18.2"
+  },
+  "devDependencies": {
+    "electron": "^44.5.1",
+    "electron-builder": "^26.15.3"
+  },
+  "build": {
+    "appId": "org.opium.browser",
+    "productName": "Opium",
+    "copyright": "Opium",
+    "directories": { "output": "../dist", "buildResources": "build" },
+    "files": ["src/**/*", "ui/**/*", "package.json"],
+    "win": {
+      "icon": "build/icon.ico",
+      "artifactName": "Opium-${version}-${arch}-${target}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Opium",
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico",
+      "artifactName": "Opium-Setup-${version}.${ext}"
+    },
+    "portable": { "artifactName": "Opium-Portable-${version}.${ext}" }
+  }
+}

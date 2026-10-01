@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; script-src 'self'; font-src 'self'; img-src 'self' https: data:">
+<title>Einstellungen</title>
+<link rel="stylesheet" href="settings.css">
+</head>
+<body>
+<nav>
+  <h1>Einstellungen</h1>
+  <a href="#general" class="active">Allgemein</a>
+  <a href="#appearance">Aussehen</a>
+  <a href="#privacy">Privatsphäre</a>
+  <a href="#permissions">Berechtigungen</a>
+  <a href="#passwords">Passwörter</a>
+  <a href="#bookmarks">Lesezeichen</a>
+  <a href="#import">Import</a>
+  <a href="#about">Über Opium</a>
+</nav>
+
+<main>
+  <section id="general">
+    <h2>Allgemein</h2>
+    <div class="group">
+      <div class="row">
+        <div class="label"><b>Suchmaschine</b><span>Wird für Suchen in der Adressleiste und auf der Startseite benutzt.</span></div>
+        <select data-key="engine">
+          <option value="duckduckgo">DuckDuckGo</option>
+          <option value="startpage">Startpage</option>
+          <option value="brave">Brave Search</option>
+          <option value="leta">Mullvad Leta</option>
+          <option value="google">Google</option>
+        </select>
+      </div>
+      <div class="row">
+        <div class="label"><b>Neue Tabs öffnen mit</b><span>Was in einem neuen Tab angezeigt wird.</span></div>
+        <select data-key="homepage">
+          <option value="opium">Opium-Startseite</option>
+          <option value="blank">Leere Seite</option>
+          <option value="custom">Eigene Adresse</option>
+        </select>
+      </div>
+      <div class="row" data-show="homepage=custom">
+        <div class="label"><b>Eigene Adresse</b></div>
+        <input type="text" data-key="homepageUrl" placeholder="https://…" spellcheck="false">
+      </div>
+      <div class="row">
+        <div class="label"><b>Tabs beim Start wiederherstellen</b><span>Öffnet die Tabs der letzten Sitzung erneut.</span></div>
+        <input type="checkbox" class="switch" data-key="restoreTabs">
+      </div>
+    </div>
+  </section>
+
+  <section id="appearance">
+    <h2>Aussehen</h2>
+    <div class="group">
+      <div class="row">
+        <div class="label"><b>Akzentfarbe</b></div>
+        <div class="swatches" data-key="accent">
+          <button data-value="#a78bfa" aria-label="Lavendel"></button>
+          <button data-value="#c084fc" aria-label="Violett"></button>
+          <button data-value="#f0abfc" aria-label="Orchidee"></button>
+          <button data-value="#818cf8" aria-label="Indigo"></button>
+          <button data-value="#7dd3fc" aria-label="Eis"></button>
+          <button data-value="#e5e5e5" aria-label="Weiß"></button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="label"><b>Schneefall</b><span>Leuchtender Schnee in der Seitenleiste und auf der Startseite.</span></div>
+        <input type="checkbox" class="switch" data-key="snow">
+      </div>
+      <div class="row" data-show="snow=true">
+        <div class="label"><b>Schneemenge</b></div>
+        <div class="segmented" data-key="snowAmount" data-type="number">
+          <button data-value="1">Leicht</button>
+          <button data-value="2">Mittel</button>
+          <button data-value="3">Stark</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="label"><b>Kompakte Seitenleiste</b><span>Schmalere Seitenleiste für mehr Platz.</span></div>
+        <input type="checkbox" class="switch" data-key="compact">
+      </div>
+    </div>
+  </section>
+
+  <section id="privacy">
+    <h2>Privatsphäre</h2>
+    <div class="group">
+      <div class="row">
+        <div class="label"><b>Werbe- und Trackerblocker</b><span id="blocked-stat">Blockiert Werbung, Tracker, Cookie-Banner und bekannte Malware-Domains.</span></div>
+        <input type="checkbox" class="switch" data-key="adblock">
+      </div>
+      <div class="row">
+        <div class="label"><b>Sicheres DNS</b><span>Verschlüsselt DNS-Anfragen, damit dein Provider nicht mitliest, welche Seiten du aufrufst.</span></div>
+        <select data-key="dns">
+          <option value="quad9">Quad9</option>
+          <option value="mullvad">Mullvad</option>
+          <option value="cloudflare">Cloudflare</option>
+          <option value="off">Aus</option>
+        </select>
+      </div>
+      <div class="row">
+        <div class="label"><b>Verlauf speichern</b><span>Wird nur lokal für Vorschläge in der Adressleiste genutzt.</span></div>
+        <input type="checkbox" class="switch" data-key="saveHistory">
+      </div>
+      <div class="row">
+        <div class="label"><b>Cookies beim Beenden löschen</b><span>Du wirst dann auf allen Seiten abgemeldet.</span></div>
+        <input type="checkbox" class="switch" data-key="clearCookiesOnExit">
+      </div>
+    </div>
+    <div class="group">
+      <div class="row">
+        <div class="label"><b>Verlauf löschen</b></div>
+        <button class="btn" data-clear="history">Löschen</button>
+      </div>
+      <div class="row">
+        <div class="label"><b>Cookies und Website-Daten löschen</b><span>Passwörter und Lesezeichen bleiben erhalten.</span></div>
+        <button class="btn" data-clear="site">Löschen</button>
+      </div>
+    </div>
+    <p class="note">Immer aktiv: Global Privacy Control, Schutz vor WebRTC-IP-Leaks, gekürzte Referrer, keine Telemetrie.</p>
+  </section>
+
+  <section id="permissions">
+    <h2>Berechtigungen</h2>
+    <div class="group">
+      <div class="row">
+        <div class="label"><b>Kamera und Mikrofon</b><span>Für Videocalls nötig.</span></div>
+        <input type="checkbox" class="switch" data-key="allowCamera">
+      </div>
+      <div class="row">
+        <div class="label"><b>Standort</b></div>
+        <input type="checkbox" class="switch" data-key="allowLocation">
+      </div>
+      <div class="row">
+        <div class="label"><b>Benachrichtigungen</b></div>
+        <input type="checkbox" class="switch" data-key="allowNotifications">
+      </div>
+    </div>
+  </section>
+
+  <section id="passwords">
+    <h2>Passwörter</h2>
+    <div class="group">
+      <div class="row">
+        <div class="label"><b>Passwörter speichern und ausfüllen</b><span>Lokal mit Windows-Verschlüsselung gespeichert.</span></div>
+        <input type="checkbox" class="switch" data-key="savePasswords">
+      </div>
+    </div>
+    <input type="search" class="filter" id="pw-filter" placeholder="Passwörter durchsuchen">
+    <div class="group list" id="pw-list"></div>
+  </section>
+
+  <section id="bookmarks">
+    <h2>Lesezeichen</h2>
+    <p class="note">Die ersten acht erscheinen oben in der Seitenleiste. Mit Strg+D speicherst du die aktuelle Seite.</p>
+    <div class="group list" id="bm-list"></div>
+  </section>
+
+  <section id="import">
+    <h2>Import</h2>
+    <div class="group">
+      <div class="row">
+        <div class="label"><b>Aus Brave importieren</b><span>Übernimmt Cookies (du bleibst angemeldet), Passwörter, Lesezeichen und Verlauf. Brave muss geschlossen sein.</span></div>
+        <button class="btn primary" id="import-brave">Importieren</button>
+      </div>
+      <div class="row result" id="import-result" hidden></div>
+    </div>
+  </section>
+
+  <section id="about">
+    <h2>Über Opium</h2>
+    <div class="group">
+      <div class="row about">
+        <img src="logo.png" alt="" width="40" height="40">
+        <div class="label"><b>Opium</b><span id="versions"></span></div>
+      </div>
+    </div>
+    <p class="note">Tastenkürzel: Strg+T neuer Tab · Strg+W schließen · Strg+L Adressleiste · Strg+B Seitenleiste · Strg+D Lesezeichen · Strg+, Einstellungen</p>
+  </section>
+</main>
+<script src="settings.js"></script>
+</body>
+</html>

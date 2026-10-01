@@ -1,0 +1,11 @@
+@-moz-document url-prefix("about:") {
+  :root {
+    --in-content-page-background: #0d0718 !important;
+    --in-content-box-background: #150a26 !important;
+    --in-content-page-color: #eadcff !important;
+    --in-content-primary-button-background: #b06cff !important;
+    --in-content-primary-button-background-hover: #c58bff !important;
+    --in-content-accent-color: #b06cff !important;
+    --in-content-border-color: rgba(176,108,255,.25) !important;
+  }
+}

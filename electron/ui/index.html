@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' https: data:; style-src 'self'; script-src 'self'; font-src 'self'">
+<title>Opium</title>
+<link rel="stylesheet" href="ui.css">
+</head>
+<body>
+<aside id="sidebar">
+  <canvas id="snow"></canvas>
+
+  <div class="bar drag">
+    <div class="lights no-drag">
+      <button class="light close" data-win="close" aria-label="Schließen"></button>
+      <button class="light min" data-win="min" aria-label="Minimieren"></button>
+      <button class="light max" data-win="max" aria-label="Maximieren"></button>
+    </div>
+    <div class="nav no-drag">
+      <button class="icon" id="back" aria-label="Zurück"><svg viewBox="0 0 16 16"><path d="M10 3.5L5.5 8l4.5 4.5"/></svg></button>
+      <button class="icon" id="forward" aria-label="Vor"><svg viewBox="0 0 16 16"><path d="M6 3.5L10.5 8 6 12.5"/></svg></button>
+      <button class="icon" id="reload" aria-label="Neu laden"><svg viewBox="0 0 16 16"><path d="M12.8 7.2A4.9 4.9 0 1 0 11.4 11.4M13 3.2v4h-4"/></svg></button>
+    </div>
+  </div>
+
+  <div class="omni no-drag">
+    <div id="urlbar">
+      <input id="url" spellcheck="false" placeholder="Suchen oder Adresse">
+      <span id="host"></span>
+      <button class="icon small" id="star" aria-label="Lesezeichen"><svg viewBox="0 0 16 16"><path d="M8 2.2l1.7 3.6 3.9.5-2.9 2.7.8 3.9L8 11l-3.5 1.9.8-3.9-2.9-2.7 3.9-.5z"/></svg></button>
+    </div>
+    <ul id="suggest" hidden></ul>
+  </div>
+
+  <div id="essentials" class="no-drag"></div>
+
+  <div class="tabs-head no-drag">
+    <span>Tabs</span>
+    <button class="icon small" id="newtab" aria-label="Neuer Tab"><svg viewBox="0 0 16 16"><path d="M8 3.5v9M3.5 8h9"/></svg></button>
+  </div>
+  <ul id="tabs" class="no-drag"></ul>
+  <div class="fill drag"></div>
+
+  <footer class="no-drag">
+    <button class="icon" id="settings" aria-label="Einstellungen"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="2.1"/><path d="M8 1.8v1.6M8 12.6v1.6M14.2 8h-1.6M3.4 8H1.8M12.4 3.6l-1.1 1.1M4.7 11.3l-1.1 1.1M12.4 12.4l-1.1-1.1M4.7 4.7L3.6 3.6"/></svg></button>
+    <span id="shield"></span>
+  </footer>
+  <div id="toast" hidden></div>
+</aside>
+
+<main id="content"><div id="viewport"></div></main>
+
+<script src="snow.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>
