@@ -45,21 +45,27 @@ function bind() {
     b.textContent = 'Gelöscht';
   }));
 
-  document.getElementById('import-brave').addEventListener('click', async (e) => {
-    const btn = e.currentTarget;
-    const out = document.getElementById('import-result');
+  const out = document.getElementById('import-result');
+  const runImport = async (btn, forceClose) => {
+    const label = btn.textContent;
     btn.disabled = true;
     btn.textContent = 'Importiere …';
-    const r = await api.importBrave();
+    const r = await api.importBrave(forceClose);
     btn.disabled = false;
-    btn.textContent = 'Importieren';
+    btn.textContent = label;
     out.hidden = false;
-    out.textContent = r.ok
-      ? `${r.cookies} Cookies, ${r.passwords} Passwörter, ${r.bookmarks} Lesezeichen und ${r.history} Verlaufseinträge übernommen.${r.skipped ? ` ${r.skipped} Cookies konnten nicht entschlüsselt werden.` : ''}`
-      : r.error;
+    if (r.ok) {
+      out.textContent = `${r.cookies} Cookies, ${r.passwords} Passwörter, ${r.bookmarks} Lesezeichen und ${r.history} Verlaufseinträge übernommen.${r.skipped ? ` ${r.skipped} Cookies konnten nicht entschlüsselt werden.` : ''}`;
+    } else if (r.code === 'BRAVE_OPEN') {
+      out.innerHTML = '<div class="label"><b>Brave ist noch geöffnet</b><span>Brave sperrt seine Daten, solange es läuft. Opium kann Brave für dich schließen. Offene Tabs stellt Brave beim nächsten Start wieder her.</span></div><button class="btn primary" id="force-import">Brave schließen und importieren</button>';
+      document.getElementById('force-import').addEventListener('click', (ev) => runImport(ev.currentTarget, true));
+    } else {
+      out.textContent = r.error;
+    }
     loadPasswords();
     loadBookmarks();
-  });
+  };
+  document.getElementById('import-brave').addEventListener('click', (e) => runImport(e.currentTarget, false));
 
   document.getElementById('pw-filter').addEventListener('input', loadPasswords);
 

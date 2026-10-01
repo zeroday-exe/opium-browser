@@ -48,7 +48,9 @@ function openCopy(profile, rel) {
   try {
     fs.copyFileSync(src, tmp);
   } catch {
-    throw new Error('Brave ist noch geöffnet – bitte Brave komplett schließen und erneut versuchen.');
+    const err = new Error('Brave ist noch geöffnet.');
+    err.code = 'BRAVE_OPEN';
+    throw err;
   }
   return { db: new DatabaseSync(tmp, { readOnly: true }), tmp };
 }
@@ -59,6 +61,12 @@ function closeCopy(handle) {
   fs.rmSync(handle.tmp, { force: true });
 }
 
+function query(db, sql, one = false) {
+  const stmt = db.prepare(sql);
+  stmt.setReadBigInts(true);
+  return one ? stmt.get() : stmt.all();
+}
+
 const SAME_SITE = { '-1': 'unspecified', 0: 'no_restriction', 1: 'lax', 2: 'strict' };
 
 async function importCookies(ses, profile, key) {
@@ -67,9 +75,9 @@ async function importCookies(ses, profile, key) {
   let cookies = 0;
   let skipped = 0;
   try {
-    const meta = h.db.prepare("SELECT value FROM meta WHERE key = 'version'").get();
+    const meta = query(h.db, "SELECT value FROM meta WHERE key = 'version'", true);
     const hashPrefix = Number(meta?.value || 0) >= 24;
-    const rows = h.db.prepare('SELECT host_key, name, value, encrypted_value, path, expires_utc, is_secure, is_httponly, samesite FROM cookies').all();
+    const rows = query(h.db, 'SELECT host_key, name, value, encrypted_value, path, expires_utc, is_secure, is_httponly, samesite FROM cookies');
     const now = Date.now() / 1000;
     for (const r of rows) {
       let value = r.value;
@@ -88,7 +96,7 @@ async function importCookies(ses, profile, key) {
         path: r.path || '/',
         secure: !!r.is_secure,
         httpOnly: !!r.is_httponly,
-        sameSite: SAME_SITE[r.samesite] || 'unspecified',
+        sameSite: SAME_SITE[String(r.samesite)] || 'unspecified',
       };
       if (r.host_key.startsWith('.') && !r.name.startsWith('__Host-')) details.domain = r.host_key;
       if (expires) details.expirationDate = expires;
@@ -111,7 +119,7 @@ function importPasswords(profile, key) {
   if (!h) return 0;
   let count = 0;
   try {
-    const rows = h.db.prepare('SELECT origin_url, username_value, password_value FROM logins WHERE blacklisted_by_user = 0').all();
+    const rows = query(h.db, 'SELECT origin_url, username_value, password_value FROM logins WHERE blacklisted_by_user = 0');
     for (const r of rows) {
       let origin;
       try { origin = new URL(r.origin_url).origin; } catch { continue; }
@@ -146,7 +154,7 @@ function importHistory(profile) {
   const h = openCopy(profile, 'History');
   if (!h) return 0;
   try {
-    const rows = h.db.prepare('SELECT url, title, last_visit_time FROM urls ORDER BY last_visit_time DESC LIMIT 5000').all();
+    const rows = query(h.db, 'SELECT url, title, last_visit_time FROM urls ORDER BY last_visit_time DESC LIMIT 5000');
     const entries = rows
       .filter((r) => /^https?:/.test(r.url))
       .map((r) => ({ url: r.url, title: r.title || r.url, t: Math.round((Number(r.last_visit_time) / 1e6 - EPOCH_OFFSET) * 1000) }));
@@ -157,7 +165,15 @@ function importHistory(profile) {
   }
 }
 
-async function importBrave(ses) {
+function closeBrave() {
+  try {
+    execFileSync('taskkill.exe', ['/IM', 'brave.exe', '/F'], { windowsHide: true, stdio: 'ignore' });
+  } catch {}
+  return new Promise((r) => setTimeout(r, 2000));
+}
+
+async function importBrave(ses, forceClose = false) {
+  if (forceClose) await closeBrave();
   if (!fs.existsSync(path.join(BRAVE, 'Local State'))) throw new Error('Keine Brave-Installation gefunden.');
   const key = masterKey();
   const profile = 'Default';

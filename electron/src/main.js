@@ -409,14 +409,14 @@ ipcMain.handle('settings:set', (e, key, value) => {
   if (key === 'restoreTabs') pushTabs();
   return true;
 });
-ipcMain.handle('brave:import', async (e) => {
+ipcMain.handle('brave:import', async (e, forceClose) => {
   if (!fromSettings(e)) return { ok: false, error: 'Nicht erlaubt' };
   try {
-    const r = await importBrave(ses);
+    const r = await importBrave(ses, forceClose === true);
     pushTabs();
     return { ok: true, ...r };
   } catch (err) {
-    return { ok: false, error: err.message };
+    return { ok: false, error: err.message, code: err.code };
   }
 });
 ipcMain.handle('passwords:list', (e) => (fromSettings(e) ? store.listPasswords() : []));

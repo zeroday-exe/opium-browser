@@ -4,7 +4,7 @@ if (location.protocol === 'file:' && /\/ui\/settings\.html$/.test(location.pathn
   contextBridge.exposeInMainWorld('opium', {
     get: () => ipcRenderer.invoke('settings:get'),
     set: (key, value) => ipcRenderer.invoke('settings:set', key, value),
-    importBrave: () => ipcRenderer.invoke('brave:import'),
+    importBrave: (forceClose) => ipcRenderer.invoke('brave:import', forceClose),
     passwords: () => ipcRenderer.invoke('passwords:list'),
     deletePassword: (origin, username) => ipcRenderer.invoke('passwords:delete', origin, username),
     bookmarks: () => ipcRenderer.invoke('bookmarks:list'),
