@@ -2,7 +2,6 @@
 
 <h1 align="center">Opium</h1>
 
-<p align="center">A privacy-first browser built on Firefox. Purple, minimal and Zen-inspired, with glowing snowfall.</p>
 
 ## Features
 
