@@ -8,11 +8,6 @@
 - **A standalone browser**: compiled from Firefox source with its own name, logo, `opium.exe` and installer
 - **Hardened privacy**: zero telemetry, no studies or crash reporter, Total Cookie Protection, strict tracking protection, fingerprinting protection, DNS over HTTPS (Quad9), HTTPS-only, WebRTC leak protection, Global Privacy Control
 - **Built-in ad blocker**: uBlock Origin is bundled with an extended set of filter lists (ads, trackers, malware, cookie banners, annoyances)
-- **Zen-style UI**: vertical tabs, a floating rounded content card and a purple glow theme
-- **macOS window controls**: red, yellow and green buttons on the left
-- **Glowing snowflakes**: in the sidebar and on the start page
-- **JetBrainsMono Nerd Font** throughout the UI
-- **Brave import**: Menu → Bookmarks → Import from another browser → Brave (passwords, bookmarks, history)
 - **Private search**: DuckDuckGo by default, with Startpage (`@sp`) and Brave Search (`@br`)
 
 ## Installation
